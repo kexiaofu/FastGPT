@@ -111,9 +111,72 @@
         "max_tokens": null,
         "stream": false
       }
+    },
+    {
+      "provider": "DeepSeek",
+      "model": "deepseek-chat",
+      "name": "deepseek-chat",
+      "maxContext": 125000,
+      "maxResponse": 32000,
+      "quoteMaxToken": 120000,
+      "maxTemperature": 1.2,
+      "charsPointsPrice": 0,
+      "censor": false,
+      "vision": false,
+      "datasetProcess": true,
+      "usedInClassify": true,
+      "usedInExtractFields": true,
+      "usedInToolCall": true,
+      "usedInQueryExtension": true,
+      "toolChoice": false,
+      "functionCall": false,
+      "customCQPrompt": "",
+      "customExtractPrompt": "",
+      "defaultSystemChatPrompt": "",
+      "defaultConfig": {
+        "temperature": 1,
+        "max_tokens": null,
+        "stream": false
+      }
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-1.5-flash-latest",
+      "name": "gemini-1.5-flash-latest",
+      "maxContext": 125000,
+      "maxResponse": 32000,
+      "quoteMaxToken": 120000,
+      "maxTemperature": 1.2,
+      "charsPointsPrice": 0,
+      "censor": false,
+      "vision": false,
+      "datasetProcess": true,
+      "usedInClassify": true,
+      "usedInExtractFields": true,
+      "usedInToolCall": true,
+      "usedInQueryExtension": true,
+      "toolChoice": false,
+      "functionCall": false,
+      "customCQPrompt": "",
+      "customExtractPrompt": "",
+      "defaultSystemChatPrompt": "",
+      "defaultConfig": {
+        "temperature": 1,
+        "max_tokens": null,
+        "stream": false
+      }
     }
   ],
   "vectorModels": [
+    {
+      "provider": "Other",
+      "model": "Pro/BAAI/bge-m3",
+      "name": "Pro/BAAI/bge-m3",
+      "charsPointsPrice": 0,
+      "defaultToken": 512,
+      "maxToken": 5000,
+      "weight": 100
+    },
     {
       "provider": "OpenAI",
       "model": "text-embedding-3-small",
