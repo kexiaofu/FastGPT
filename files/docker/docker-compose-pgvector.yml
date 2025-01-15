@@ -138,7 +138,8 @@ services:
       - ./mysql:/var/lib/mysql
   oneapi:
     container_name: oneapi
-    image: calciumion/new-api:latest
+    image: justsong/one-api
+    # image: calciumion/new-api:latest
     # image: ghcr.io/songquanpeng/one-api:v0.6.7
     # image: registry.cn-hangzhou.aliyuncs.com/fastgpt/one-api:v0.6.6 # 阿里云
     ports:
