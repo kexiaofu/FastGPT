@@ -7,11 +7,12 @@ export type ModelProviderIdType =
   | 'Meta'
   | 'MistralAI'
   | 'Groq'
+  | 'Grok'
   | 'AliCloud'
   | 'Qwen'
   | 'Doubao'
-  | 'ChatGLM'
   | 'DeepSeek'
+  | 'ChatGLM'
   | 'Ernie'
   | 'Moonshot'
   | 'MiniMax'
@@ -20,14 +21,18 @@ export type ModelProviderIdType =
   | 'Baichuan'
   | 'StepFun'
   | 'Yi'
+  | 'Siliconflow'
+  | 'PPIO'
   | 'Ollama'
   | 'BAAI'
   | 'FishAudio'
+  | 'Intern'
+  | 'Moka'
   | 'Other';
 
 export type ModelProviderType = {
   id: ModelProviderIdType;
-  name: string;
+  name: any;
   avatar: string;
 };
 
@@ -58,14 +63,14 @@ export const ModelProviderList: ModelProviderType[] = [
     avatar: 'model/mistral'
   },
   {
+    id: 'Grok',
+    name: 'Grok',
+    avatar: 'model/grok'
+  },
+  {
     id: 'Groq',
     name: 'Groq',
     avatar: 'model/groq'
-  },
-  {
-    id: 'AliCloud',
-    name: i18nT('common:model_alicloud'),
-    avatar: 'model/alicloud'
   },
   {
     id: 'Qwen',
@@ -78,6 +83,11 @@ export const ModelProviderList: ModelProviderType[] = [
     avatar: 'model/doubao'
   },
   {
+    id: 'DeepSeek',
+    name: 'DeepSeek',
+    avatar: 'model/deepseek'
+  },
+  {
     id: 'ChatGLM',
     name: i18nT('common:model_chatglm'),
     avatar: 'model/chatglm'
@@ -86,11 +96,6 @@ export const ModelProviderList: ModelProviderType[] = [
     id: 'Ernie',
     name: i18nT('common:model_ernie'),
     avatar: 'model/ernie'
-  },
-  {
-    id: 'DeepSeek',
-    name: 'DeepSeek',
-    avatar: 'model/deepseek'
   },
   {
     id: 'Moonshot',
@@ -144,6 +149,31 @@ export const ModelProviderList: ModelProviderType[] = [
     avatar: 'model/fishaudio'
   },
   {
+    id: 'Intern',
+    name: i18nT('common:model_intern'),
+    avatar: 'model/intern'
+  },
+  {
+    id: 'Moka',
+    name: i18nT('common:model_moka'),
+    avatar: 'model/moka'
+  },
+  {
+    id: 'AliCloud',
+    name: i18nT('common:model_alicloud'),
+    avatar: 'model/alicloud'
+  },
+  {
+    id: 'Siliconflow',
+    name: i18nT('common:model_siliconflow'),
+    avatar: 'model/siliconflow'
+  },
+  {
+    id: 'PPIO',
+    name: i18nT('common:model_ppio'),
+    avatar: 'model/ppio'
+  },
+  {
     id: 'Other',
     name: i18nT('common:model_other'),
     avatar: 'model/huggingface'
@@ -153,6 +183,7 @@ export const ModelProviderMap = Object.fromEntries(
   ModelProviderList.map((item, index) => [item.id, { ...item, order: index }])
 );
 
-export const getModelProvider = (provider: ModelProviderIdType) => {
+export const getModelProvider = (provider?: ModelProviderIdType) => {
+  if (!provider) return ModelProviderMap.Other;
   return ModelProviderMap[provider] ?? ModelProviderMap.Other;
 };

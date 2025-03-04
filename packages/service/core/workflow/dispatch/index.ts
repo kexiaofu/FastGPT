@@ -204,6 +204,7 @@ export async function dispatchWorkFlow(data: Props): Promise<DispatchFlowRespons
     { inputs = [] }: RuntimeNodeItemType,
     {
       answerText = '',
+      reasoningText,
       responseData,
       nodeDispatchUsages,
       toolResponses,
@@ -213,6 +214,7 @@ export async function dispatchWorkFlow(data: Props): Promise<DispatchFlowRespons
     }: Omit<
       DispatchNodeResultType<{
         [NodeOutputKeyEnum.answerText]?: string;
+        [NodeOutputKeyEnum.reasoningText]?: string;
         [DispatchNodeResponseKeyEnum.nodeResponse]?: ChatHistoryItemResType;
       }>,
       'nodeResponse'
@@ -230,26 +232,46 @@ export async function dispatchWorkFlow(data: Props): Promise<DispatchFlowRespons
       chatNodeUsages = chatNodeUsages.concat(nodeDispatchUsages);
     }
 
-    if (toolResponses !== undefined) {
+    if (toolResponses !== undefined && toolResponses !== null) {
       if (Array.isArray(toolResponses) && toolResponses.length === 0) return;
-      if (typeof toolResponses === 'object' && Object.keys(toolResponses).length === 0) return;
+      if (
+        !Array.isArray(toolResponses) &&
+        typeof toolResponses === 'object' &&
+        Object.keys(toolResponses).length === 0
+      )
+        return;
       toolRunResponse = toolResponses;
     }
 
     // Histories store
     if (assistantResponses) {
       chatAssistantResponse = chatAssistantResponse.concat(assistantResponses);
-    } else if (answerText) {
-      // save assistant text response
-      const isResponseAnswerText =
-        inputs.find((item) => item.key === NodeInputKeyEnum.aiChatIsResponseText)?.value ?? true;
-      if (isResponseAnswerText) {
-        chatAssistantResponse.push({
-          type: ChatItemValueTypeEnum.text,
-          text: {
-            content: answerText
-          }
-        });
+    } else {
+      if (reasoningText) {
+        const isResponseReasoningText = inputs.find(
+          (item) => item.key === NodeInputKeyEnum.aiChatReasoning
+        )?.value;
+        if (isResponseReasoningText) {
+          chatAssistantResponse.push({
+            type: ChatItemValueTypeEnum.reasoning,
+            reasoning: {
+              content: reasoningText
+            }
+          });
+        }
+      }
+      if (answerText) {
+        // save assistant text response
+        const isResponseAnswerText =
+          inputs.find((item) => item.key === NodeInputKeyEnum.aiChatIsResponseText)?.value ?? true;
+        if (isResponseAnswerText) {
+          chatAssistantResponse.push({
+            type: ChatItemValueTypeEnum.text,
+            text: {
+              content: answerText
+            }
+          });
+        }
       }
     }
 

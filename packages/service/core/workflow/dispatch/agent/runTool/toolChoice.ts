@@ -1,5 +1,5 @@
 import { createChatCompletion } from '../../../../ai/config';
-import { filterGPTMessageByMaxTokens, loadRequestMessages } from '../../../../chat/utils';
+import { filterGPTMessageByMaxContext, loadRequestMessages } from '../../../../chat/utils';
 import {
   ChatCompletion,
   ChatCompletionMessageToolCall,
@@ -93,7 +93,15 @@ export const runToolWithToolChoice = async (
     stream,
     externalProvider,
     workflowStreamResponse,
-    params: { temperature, maxToken, aiChatVision }
+    params: {
+      temperature,
+      maxToken,
+      aiChatVision,
+      aiChatTopP,
+      aiChatStopSign,
+      aiChatResponseFormat,
+      aiChatJsonSchema
+    }
   } = workflowProps;
 
   if (maxRunToolTimes <= 0 && response) {
@@ -228,11 +236,16 @@ export const runToolWithToolChoice = async (
     };
   });
 
+  const max_tokens = computedMaxToken({
+    model: toolModel,
+    maxToken
+  });
+
   // Filter histories by maxToken
   const filterMessages = (
-    await filterGPTMessageByMaxTokens({
+    await filterGPTMessageByMaxContext({
       messages,
-      maxTokens: toolModel.maxContext - 300 // filter token. not response maxToken
+      maxContext: toolModel.maxContext - (max_tokens || 0) // filter token. not response maxToken
     })
   ).map((item) => {
     if (item.role === 'assistant' && item.tool_calls) {
@@ -248,31 +261,30 @@ export const runToolWithToolChoice = async (
     return item;
   });
 
-  const [requestMessages, max_tokens] = await Promise.all([
+  const [requestMessages] = await Promise.all([
     loadRequestMessages({
       messages: filterMessages,
       useVision: toolModel.vision && aiChatVision,
       origin: requestOrigin
-    }),
-    computedMaxToken({
-      model: toolModel,
-      maxToken,
-      filterMessages
     })
   ]);
   const requestBody = llmCompletionsBodyFormat(
     {
       model: toolModel.model,
-      temperature,
-      max_tokens,
       stream,
       messages: requestMessages,
       tools,
-      tool_choice: 'auto'
+      tool_choice: 'auto',
+      temperature,
+      max_tokens,
+      top_p: aiChatTopP,
+      stop: aiChatStopSign,
+      response_format: aiChatResponseFormat,
+      json_schema: aiChatJsonSchema
     },
     toolModel
   );
-  // console.log(JSON.stringify(requestBody, null, 2), '==requestBody');
+  // console.log(JSON.stringify(requestMessages, null, 2), '==requestBody');
   /* Run llm */
   const {
     response: aiResponse,

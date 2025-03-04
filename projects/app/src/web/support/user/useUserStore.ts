@@ -1,10 +1,8 @@
 import type { UserUpdateParams } from '@/types/user';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { getTokenLogin, putUserInfo } from '@/web/support/user/api';
-import { getTeamMembers } from '@/web/support/user/team/api';
 import type { MemberGroupListType } from '@fastgpt/global/support/permission/memberGroup/type';
-import type { OrgMemberSchemaType, OrgType } from '@fastgpt/global/support/user/team/org/type';
-import type { TeamMemberItemType } from '@fastgpt/global/support/user/team/type';
+import type { OrgType } from '@fastgpt/global/support/user/team/org/type';
 import type { UserType } from '@fastgpt/global/support/user/type.d';
 import type { FeTeamPlanStatusType } from '@fastgpt/global/support/wallet/sub/type';
 import { create } from 'zustand';
@@ -29,9 +27,6 @@ type State = {
 
   teamPlanStatus: FeTeamPlanStatusType | null;
   initTeamPlanStatus: () => Promise<any>;
-
-  teamMembers: TeamMemberItemType[];
-  loadAndGetTeamMembers: (init?: boolean) => Promise<TeamMemberItemType[]>;
 
   teamMemberGroups: MemberGroupListType;
   myGroups: MemberGroupListType;
@@ -102,28 +97,13 @@ export const useUserStore = create<State>()(
         },
         // team
         teamPlanStatus: null,
-        initTeamPlanStatus() {
+        async initTeamPlanStatus() {
           return getTeamPlanStatus().then((res) => {
             set((state) => {
               state.teamPlanStatus = res;
             });
             return res;
           });
-        },
-        teamMembers: [],
-        loadAndGetTeamMembers: async (init = false) => {
-          if (!useSystemStore.getState()?.feConfigs?.isPlus) return [];
-
-          const randomRefresh = Math.random() > 0.7;
-          if (!randomRefresh && !init && get().teamMembers?.length)
-            return Promise.resolve(get().teamMembers);
-
-          const res = await getTeamMembers();
-          set((state) => {
-            state.teamMembers = res;
-          });
-
-          return res;
         },
         teamMemberGroups: [],
         teamOrgs: [],

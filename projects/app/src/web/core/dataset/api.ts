@@ -37,7 +37,6 @@ import type { DatasetCollectionItemType } from '@fastgpt/global/core/dataset/typ
 import { DatasetCollectionSyncResultEnum } from '@fastgpt/global/core/dataset/constants';
 import type { DatasetDataItemType } from '@fastgpt/global/core/dataset/type';
 import type { DatasetCollectionsListItemType } from '@/global/core/dataset/type.d';
-import { PagingData } from '@/types';
 import type { getDatasetTrainingQueueResponse } from '@/pages/api/core/dataset/training/getDatasetTrainingQueue';
 import type { rebuildEmbeddingBody } from '@/pages/api/core/dataset/training/rebuildEmbedding';
 import type {
@@ -57,7 +56,6 @@ import type {
 import type { UpdateDatasetDataProps } from '@fastgpt/global/core/dataset/controller';
 import type { DatasetFolderCreateBody } from '@/pages/api/core/dataset/folder/create';
 import type { PaginationProps, PaginationResponse } from '@fastgpt/web/common/fetch/type';
-import type { GetScrollCollectionsProps } from '@/pages/api/core/dataset/collection/scrollList';
 import type {
   GetApiDatasetFileListProps,
   GetApiDatasetFileListResponse
@@ -66,8 +64,7 @@ import type {
   listExistIdQuery,
   listExistIdResponse
 } from '@/pages/api/core/dataset/apiDataset/listExistId';
-import { FeishuServer, YuqueServer } from '@fastgpt/global/core/dataset/apiDataset';
-import { RequireOnlyOne } from '@fastgpt/global/common/type/utils';
+import { GetQuoteDataResponse } from '@/pages/api/core/dataset/data/getQuoteData';
 
 /* ======================== dataset ======================= */
 export const getDatasets = (data: GetDatasetListBody) =>
@@ -110,7 +107,7 @@ export const postSearchText = (data: SearchTestProps) =>
 
 /* ============================= collections ==================================== */
 export const getDatasetCollections = (data: GetDatasetCollectionsProps) =>
-  POST<PagingData<DatasetCollectionsListItemType>>(`/core/dataset/collection/list`, data);
+  POST<PaginationResponse<DatasetCollectionsListItemType>>(`/core/dataset/collection/listV2`, data);
 export const getDatasetCollectionPathById = (parentId: string) =>
   GET<ParentTreePathItemType[]>(`/core/dataset/collection/paths`, { parentId });
 export const getDatasetCollectionById = (id: string) =>
@@ -175,11 +172,6 @@ export const getTagUsage = (datasetId: string) =>
   GET<TagUsageType[]>(`/proApi/core/dataset/tag/tagUsage?datasetId=${datasetId}`);
 export const getAllTags = (datasetId: string) =>
   GET<{ list: DatasetTagType[] }>(`/proApi/core/dataset/tag/getAllTags?datasetId=${datasetId}`);
-export const getScrollCollectionList = (data: GetScrollCollectionsProps) =>
-  POST<PaginationResponse<DatasetCollectionsListItemType>>(
-    `/core/dataset/collection/scrollList`,
-    data
-  );
 
 /* =============================== data ==================================== */
 /* get dataset list */
@@ -205,6 +197,10 @@ export const putDatasetDataById = (data: UpdateDatasetDataProps) =>
  */
 export const delOneDatasetDataById = (id: string) =>
   DELETE<string>(`/core/dataset/data/delete`, { id });
+
+// Get quote data
+export const getQuoteData = (id: string) =>
+  GET<GetQuoteDataResponse>(`/core/dataset/data/getQuoteData`, { id });
 
 /* ================ training ==================== */
 export const postRebuildEmbedding = (data: rebuildEmbeddingBody) =>
